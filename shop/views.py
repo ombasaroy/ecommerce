@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Product
+from .models import Product, Category
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
@@ -76,3 +76,17 @@ def product(request, id):
     context = {'product': product}
 
     return render(request, 'product.html', context)
+
+
+def category(request, categoryname):
+    # categoryname = categoryname.replace('-', ' ')
+    try:
+        # Finding the category
+        category = Category.objects.get(name=categoryname)
+
+        # Getting all the products in that category
+        products = Product.objects.filter(category=category)
+        return render(request, 'category.html', {'products': products, 'category': category})
+    except:
+        messages.success(request, "That category doesn't exist")
+        return redirect('index')
